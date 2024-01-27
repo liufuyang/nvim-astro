@@ -1,28 +1,66 @@
 -- ideas from https://github.com/Juniar-Rakhman/astronvim_config/blob/dea5860d4b1767873d4d9d2053fc71e539face87/plugins/java/init.lua
-function AttachDebugger(host, port)
-  local dap = require "dap"
-  dap.configurations.java = {
-    {
-      type = "java",
-      request = "attach",
-      name = "Attach debugger",
-      hostName = host,
-      port = port,
-    },
-  }
-  dap.continue()
-end
+-- function AttachDebugger(host, port)
+--   local dap = require "dap"
+--   dap.configurations.java = {
+--     {
+--       type = "java",
+--       request = "attach",
+--       name = "Attach debugger",
+--       hostName = host,
+--       port = port,
+--     },
+--   }
+--   dap.continue()
+-- end
 
--- TODO
--- However this might not be the idea way to set it up, we should try this idea instead
+-- However the above way might not be the idea way to set it up, we should try this idea instead
 -- https://github.com/mfussenegger/nvim-dap-python/blob/091e4ae00a12085f9ed4200a3cd04af7179b8a23/lua/dap-python.lua#L235-L245
 
-
 -- copy of astrocommunity.pack.java
-
 local utils = require "astronvim.utils"
 
 return {
+  {
+    -- better way of setting dap with remote debug configurations
+    "mfussenegger/nvim-dap",
+    config = function ()
+      local dap = require "dap"
+      local java_config = {
+        {
+          type = "java",
+          request = "attach",
+          name = "Attach debugger to remote",
+          hostName = function ()
+            local host = vim.fn.input('Attach to host [127.0.0.1]: ')
+            host = host ~= '' and host or 'localhost'
+            return host
+          end,
+          port = function ()
+            local port = tonumber(vim.fn.input('On port [4100]: ')) or 4100
+            return port
+          end
+        },
+        {
+          type = "java",
+          request = "attach",
+          name = "Attach debugger to localhost on 4100",
+          hostName = '127.0.0.1',
+          port = 4100,
+        },
+        {
+          type = "java",
+          request = "attach",
+          name = "Attach debugger to localhost on 4200",
+          hostName = '127.0.0.1',
+          port = 4200,
+        },
+      }
+      dap.configurations.java = dap.configurations.java and vim.list_extend(dap.configurations.java, java_config)
+        or java_config
+    end
+  },
+
+  -- copy from astrocommunity.pack.java
   {
     "nvim-treesitter/nvim-treesitter",
     opts = function(_, opts)
