@@ -8,6 +8,12 @@ return {
 
     -- https://github.com/AstroNvim/astrocommunity/blob/main/lua/astrocommunity/pack/rust/README.md
     config = {
+      -- These settings not working, will stop jdtls being triggered!
+      -- jdtls = {
+      --   color = {
+      --     enabled = false,
+      --   },
+      -- },
       rust_analyzer = {
         settings = {
           ["rust-analyzer"] = {
